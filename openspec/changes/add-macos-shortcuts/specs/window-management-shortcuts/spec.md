@@ -66,7 +66,7 @@ Cmd+Space SHALL open the application launcher. Cmd+Ctrl+Q SHALL lock the screen.
 - **THEN** the screen locks
 
 ### Requirement: Tiling actions on the Ctrl+Opt layer
-Actions with no macOS equivalent SHALL be reachable with Ctrl+Opt. Arrows SHALL move focus between windows, Shift+arrows SHALL swap the window, and T, J, G, P, O and L SHALL toggle floating, split, grouping, pseudo-tiling, pop-out and layout. Equal and Minus SHALL resize, Space SHALL open the Omarchy menu, and Slash SHALL show the keybindings list.
+Actions with no macOS equivalent SHALL be reachable with Ctrl+Opt. Arrows SHALL move focus between windows, Shift+arrows SHALL swap the window, and T, J, G, P, O, L and F SHALL toggle floating, split, grouping, pseudo-tiling, pop-out, layout and tiled full screen. Equal and Minus SHALL resize, Backspace SHALL toggle transparency, Space SHALL open the Omarchy menu, and Slash SHALL show the keybindings list.
 
 #### Scenario: Focus window to the left
 - **WHEN** two tiled windows are side by side, the right one is focused, and the user presses Ctrl+Opt+Left

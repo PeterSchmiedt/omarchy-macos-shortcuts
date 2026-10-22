@@ -2,8 +2,8 @@
 
 ## 1. Scaffolding and keymap
 
-- [ ] 1.1 Create the repo layout from design D1 (`install.sh`, `bin/`, `hypr/`, `check/`, `hooks/`, `README.md` stub) and verify with `ls -R` that every path exists
-- [ ] 1.2 Write `hypr/keymap.lua` as data only:
+- [x] 1.1 Create the repo layout from design D1 (`install.sh`, `bin/`, `hypr/`, `check/`, `hooks/`, `README.md` stub) and verify with `ls -R` that every path exists
+- [x] 1.2 Write `hypr/keymap.lua` as data only:
   - forwarded letters A-Z minus reserved Q and M, for both Cmd and Cmd+Shift
   - zoom keys
   - text-navigation keys
@@ -14,7 +14,7 @@
 
 ## 2. Key forwarding (app-shortcuts, text-navigation)
 
-- [ ] 2.1 Implement `hypr/send.lua`: the down/up `send_key_state` sender with the 50 ms gap and terminal detection via the `terminal` tag. Verify that `hyprctl reload && hyprctl configerrors` is clean with the module loaded by hand.
+- [x] 2.1 Implement `hypr/send.lua`: the down/up `send_key_state` sender with the 50 ms gap and terminal detection via the `terminal` tag. Verify that `hyprctl reload && hyprctl configerrors` is clean with the module loaded by hand.
 - [ ] 2.2 Implement `hypr/init.lua` with forwarding only. It unbinds every claimed key, then binds the Cmd and Cmd+Shift letters and the zoom keys from `keymap.lua` with `repeating = true`. Verify by hand in Chromium: Cmd+A selects all, Cmd+F opens find (not full screen), Cmd+Shift+T reopens a tab, Cmd+Equal zooms.
 - [ ] 2.3 Add the terminal branch. Cmd+letter sends Ctrl+Shift+letter. Cmd+C and Cmd+V send Ctrl+Insert and Shift+Insert. Verify in the Omarchy terminal: Cmd+C copies a selection while `sleep 10` keeps running, Cmd+V pastes, and the physical Ctrl+C still interrupts.
 - [ ] 2.4 Verify held keys. Hold Cmd+Z for 2 s in a text editor and confirm repeated undo. Release it and type `abc`, and confirm plain `abc` appears. Repeat both in a terminal. If repeat leaves stuck keys, turn repeat off for the affected keys and record the limitation in the README.
@@ -44,17 +44,17 @@
 ## 3b. Natural scrolling
 
 - [ ] 3b.1 Add the `input` table to `keymap.lua` and apply it in `init.lua` (design D10). Verify that `hyprctl getoption input:natural_scroll` and `hyprctl getoption input:touchpad:natural_scroll` both report `true`, and that rolling the mouse wheel toward you in a browser reveals later content.
-- [ ] 3b.2 Verify the override. Set `natural_scroll = false` for the mouse in `~/.config/hypr/input.lua`, reload, and confirm `input:natural_scroll` reports `false` while shortcuts still work. Then revert the test edit.
-- [ ] 3b.3 Document natural scrolling and how to turn it off in `README.md`, and add the opt-out hint to the installer's closing message. Verify that the README snippet, pasted into `input.lua`, works as written.
+- [x] 3b.2 Verify the override. Set `natural_scroll = false` for the mouse in `~/.config/hypr/input.lua`, reload, and confirm `input:natural_scroll` reports `false` while shortcuts still work. Then revert the test edit.
+- [x] 3b.3 Document natural scrolling and how to turn it off in `README.md`, and add the opt-out hint to the installer's closing message. Verify that the README snippet, pasted into `input.lua`, works as written.
 
 ## 4. Installer
 
-- [ ] 4.1 Implement `install.sh` preflight and bootstrap: Omarchy, anchor line, `git`/`hyprctl`/`lua`, then clone or pull and re-exec from the clone. Verify that it exits non-zero with a clear message in a shell where `OMARCHY_PATH` points to an empty dir, and that nothing under `~/.config` changes.
-- [ ] 4.2 Implement the backup, the symlink, and insertion of the marked pre and post blocks (design D2) with awk. Verify that two consecutive runs leave exactly one of each block (`grep -c '>>> omarchy-macos-shortcuts'` gives 2) and that the user's `hypr.bindings` require stays after our block.
-- [ ] 4.3 Implement the reload, `hyprctl configerrors` and rollback. Verify by planting a syntax error in `hypr/init.lua` on a test branch: the installer restores `hyprland.lua`, reloads, prints the error and exits 1.
-- [ ] 4.4 Implement `install.sh uninstall`: remove the blocks, reload, then remove the hook and symlink, and ask before removing the clone. Verify that Super+F toggles full screen again afterwards, that `hyprctl getoption input:natural_scroll` is back to its pre-install value, and that `diff` against the backup shows only the user's own later edits.
-- [ ] 4.5 Implement `--pc-keyboard` (design D9). Verify with `hyprctl getoption input:kb_options` that it shows Omarchy's options plus `altwin:swap_alt_win`, and that a default install leaves the value unchanged.
-- [ ] 4.6 Verify the safety requirements:
+- [x] 4.1 Implement `install.sh` preflight and bootstrap: Omarchy, anchor line, `git`/`hyprctl`/`lua`, then clone or pull and re-exec from the clone. Verify that it exits non-zero with a clear message in a shell where `OMARCHY_PATH` points to an empty dir, and that nothing under `~/.config` changes.
+- [x] 4.2 Implement the backup, the symlink, and insertion of the marked pre and post blocks (design D2) with awk. Verify that two consecutive runs leave exactly one of each block (`grep -c '>>> omarchy-macos-shortcuts'` gives 2) and that the user's `hypr.bindings` require stays after our block.
+- [x] 4.3 Implement the reload, `hyprctl configerrors` and rollback. Verify by planting a syntax error in `hypr/init.lua` on a test branch: the installer restores `hyprland.lua`, reloads, prints the error and exits 1.
+- [x] 4.4 Implement `install.sh uninstall`: remove the blocks, reload, then remove the hook and symlink, and ask before removing the clone. Verify that Super+F toggles full screen again afterwards, that `hyprctl getoption input:natural_scroll` is back to its pre-install value, and that `diff` against the backup shows only the user's own later edits.
+- [x] 4.5 Implement `--pc-keyboard` (design D9). Verify with `hyprctl getoption input:kb_options` that it shows Omarchy's options plus `altwin:swap_alt_win`, and that a default install leaves the value unchanged.
+- [x] 4.6 Verify the safety requirements:
   - Move the clone away and run `hyprctl reload`: `hyprctl configerrors` is clean and Omarchy's defaults apply.
   - Run `omarchy refresh hyprland` then the installer, and the block is restored.
   - A user binding on Cmd+M in `bindings.lua` wins.
@@ -62,8 +62,8 @@
 
 ## 5. Collision check
 
-- [ ] 5.1 Implement `check/collect.lua`: stub `hl`, record `o.bind` calls, and load Omarchy's binding files with `omarchy_preinstalled_bindings = false`. Verify that it prints SUPER+1 through SUPER+0 (the loop-generated bindings) and SUPER+F.
-- [ ] 5.2 Implement `bin/omarchy-macos-check`:
+- [x] 5.1 Implement `check/collect.lua`: stub `hl`, record `o.bind` calls, and load Omarchy's binding files with `omarchy_preinstalled_bindings = false`. Verify that it prints SUPER+1 through SUPER+0 (the loop-generated bindings) and SUPER+F.
+- [x] 5.2 Implement `bin/omarchy-macos-check`:
   - report collisions, which are claimed keys not in `displaces`
   - report stale `displaces` entries as info
   - report a missing block or broken symlink

@@ -160,7 +160,7 @@ The check also verifies that the marked block and symlink exist. With `--notify`
 
 `--pc-keyboard` adds `macos_pc_keyboard = true` to the pre block. `init.lua` then re-applies `hl.config({ input = { kb_options = <omarchy options> .. ",altwin:swap_alt_win" } })`.
 
-The current option string isn't exposed to Lua after Omarchy sets it. `init.lua` therefore rebuilds it with the same logic as `default/hypr/input.lua` (base options, plus `grp:alts_toggle` for non-Latin layouts). Whether that's a problem is covered in Risks. This replaces the proposal's "edit input.lua": nothing in `input.lua` changes, and uninstall removes the flag along with the block.
+`init.lua` reads Omarchy's current option string with `hl.get_config("input.kb_options")`, which Omarchy itself uses for `cursor.zoom_factor`. It appends the swap only if it isn't already there. Nothing is rebuilt, so the string can't drift from Omarchy's. Nothing in `input.lua` changes, and uninstall removes the flag along with the block. The check verifies that the live `input:kb_options` contains the swap whenever the flag is set.
 
 ### D10. Natural scrolling
 
@@ -181,7 +181,9 @@ Nothing in `input.lua` is edited. The setting lives in `keymap.lua` as an `input
 - **[Risk] The stuck-key and repeat behaviour of `send_key_state` under held keys isn't proven for every letter.** → A dedicated test task holds Cmd+Z, then types plain text, then repeats this in a terminal. If repeat misbehaves, repeat is turned off for that key and the limitation is documented. Repeat isn't worth stuck keys.
 - **[Risk] Ctrl+Left/Right and Ctrl+digit now switch workspaces, so apps that use them (word jump in Linux-native apps, tab N in some apps) lose them.** → This is intended Mac behaviour. Opt+arrows provide word jump instead (text-navigation spec).
 - **[Risk] Cmd+W now closes a tab (Ctrl+W), not the window. Terminals without tabs, such as Alacritty, ignore Ctrl+Shift+W.** → Cmd+Q still closes the app. Documented in the README.
-- **[Risk] `kb_options` rebuilt in D9 can drift from Omarchy's input.lua.** → It only matters with `--pc-keyboard`. The check compares our string against a sandbox evaluation of `default/hypr/input.lua` and warns when they differ.
+- **[Risk] A user's own `kb_options` in `input.lua` loads after the module and drops the swap.** → It only matters with `--pc-keyboard`. The check reports when the flag is set but the live option lacks `altwin:swap_alt_win`.
+- **[Decision during implementation] Rollback on a broken update.** If the module brought by an update fails to load, restoring the previous `hyprland.lua` isn't enough, because it already loads the module. The installer then also removes its blocks, so Omarchy's defaults load cleanly. See the installation spec.
+- **[Decision during implementation] Extra relocations.** Super+Backspace (transparency) moves to Ctrl+Opt+Backspace and Super+Ctrl+F (tiled full screen) moves to Ctrl+Opt+F, because Cmd+Backspace and Cmd+Ctrl+F are now claimed. Super+Ctrl+Q (calculator) has no new home; the XF86Calculator key still works. Delete-to-line-start is a two-step key sequence in `keymap.lua`, not a function in `actions.lua`.
 - **[Trade-off] `curl | bash` runs whatever `main` holds.** → The script stays short, and the README links to it and documents the clone-and-inspect path.
 - **[Trade-off] Turning off preinstalled launcher bindings removes about 20 shortcuts some users rely on.** → Users can set `omarchy_preinstalled_bindings = true` in their own `hyprland.lua`, which the pre block respects. The ungated SUPER+SHIFT+B/F/N are always unbound, because they are Cmd+Shift app keys.
 

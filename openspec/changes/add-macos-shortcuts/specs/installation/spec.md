@@ -52,6 +52,10 @@ After changing configuration, the installer SHALL reload Hyprland and check for 
 - **WHEN** the reload after install reports a config error
 - **THEN** `~/.config/hypr/hyprland.lua` matches its pre-install content and the installer exits non-zero
 
+#### Scenario: Broken update unloads the module
+- **WHEN** an update brings a module version that fails to load, and the restored previous configuration still reports errors
+- **THEN** the installer removes its marked blocks so Hyprland loads with Omarchy's defaults, says so, and exits non-zero
+
 ### Requirement: Clean uninstall
 Uninstall SHALL remove everything the installer added: the marked blocks (including the PC-keyboard flag), the symlink and the hook. It SHALL reload Hyprland so Omarchy's default bindings are restored. It SHALL remove the marked block before removing the module, so the config never points at a missing module.
 

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Check that omarchy-macos-shortcuts is loaded and doesn't collide with
+# Omarchy's own default bindings. Read-only: it never changes any file.
+#
+# Usage: omarchy-macos-check [--notify]
+#   --notify  report problems as a desktop notification and print nothing when
+#             everything is fine (used by the Omarchy post-update hook)
+
+set -uo pipefail
+
+REPO_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+OMARCHY_PATH="${OMARCHY_PATH:-/usr/share/omarchy}"
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+HYPRLAND_LUA="$CONFIG_HOME/hypr/hyprland.lua"
+MODULE_LINK="$CONFIG_HOME/hypr/macos"
+MARKER=">>> omarchy-macos-shortcuts"
+
+notify=false
+[[ ${1:-} == --notify ]] && notify=true
+
+problems=()
+info=()
+
+# Is the module wired into Hyprland?
+if ! grep -qF -- "-- $MARKER" "$HYPRLAND_LUA" 2>/dev/null; then
+  problems+=("The shortcuts are not loaded: $HYPRLAND_LUA has no omarchy-macos-shortcuts block (for example after 'omarchy refresh hyprland'). Restore it with: $REPO_DIR/install.sh")
+fi
+
+if [[ ! -L $MODULE_LINK ]]; then
+  problems+=("$MODULE_LINK is missing. Restore it with: $REPO_DIR/install.sh")
+elif [[ ! -f $MODULE_LINK/init.lua ]]; then
+  problems+=("$MODULE_LINK points to a missing directory ($(readlink "$MODULE_LINK")). Restore it with: $REPO_DIR/install.sh")
+fi
+
+# Does Omarchy now bind any key we claim, other than the ones we expect to take over?
+report="$(lua "$REPO_DIR/check/collect.lua" "$OMARCHY_PATH" | lua "$REPO_DIR/check/compare.lua" "$REPO_DIR")"
+while IFS=$'\t' read -r kind keys detail; do
+  case $kind in
+    COLLISION) problems+=("Omarchy now binds $keys ($detail), which this module overrides. Rebind one of them in ~/.config/hypr/bindings.lua.") ;;
+    STALE) info+=("Omarchy no longer binds $keys (was moved to $detail).") ;;
+  esac
+done <<<"$report"
+
+# With --pc-keyboard, the Alt/Win swap must actually be active.
+if grep -qF "macos_pc_keyboard = true" "$HYPRLAND_LUA" 2>/dev/null && command -v hyprctl >/dev/null; then
+  if ! hyprctl getoption input:kb_options 2>/dev/null | grep -qF "altwin:swap_alt_win"; then
+    problems+=("--pc-keyboard is on but input:kb_options does not contain altwin:swap_alt_win. Check kb_options in ~/.config/hypr/input.lua.")
+  fi
+fi
+
+if $notify; then
+  if ((${#problems[@]})); then
+    message="$(printf '%s\n' "${problems[@]}")"
+    if command -v omarchy-notification-send >/dev/null; then
+      omarchy-notification-send "macOS shortcuts: $message"
+    else
+      notify-send "macOS shortcuts" "$message"
+    fi
+  fi
+else
+  for line in "${info[@]}"; do echo "info: $line"; done
+  for line in "${problems[@]}"; do echo "problem: $line"; done
+  ((${#problems[@]})) || echo "No problems found: the shortcuts are loaded and no Omarchy binding collides with them."
+fi
+
+((${#problems[@]} == 0))
