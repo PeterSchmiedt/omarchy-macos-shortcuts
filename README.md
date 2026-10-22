@@ -57,7 +57,7 @@ Press **Ctrl+Opt+/** to see every binding. The ones from this project start with
 
 In terminals, Cmd+letter sends **Ctrl+Shift+letter** (Cmd+T is a new tab). Cmd+C and Cmd+V copy and paste, and the physical Ctrl+C still interrupts.
 
-Cmd+W sends Ctrl+W, which closes a tab, as on a Mac. To close an app, use Cmd+Q. Terminals without tabs, such as Alacritty, ignore Cmd+W.
+Cmd+W sends Ctrl+W, which closes a tab, as on a Mac. To close an app, use Cmd+Q. In terminals without tabs (foot, Alacritty), Cmd+W closes the window. In terminals with tabs (kitty, Ghostty, WezTerm), it closes the current tab.
 
 ### Text navigation
 

@@ -20,7 +20,14 @@ M.forward_letters = {
 M.terminal_overrides = {
   C = { mods = "CTRL", key = "Insert" },
   V = { mods = "SHIFT", key = "Insert" },
+  -- Cmd+W closes the window in terminals without tabs (foot, Alacritty,
+  -- Omarchy's TUI windows), which would otherwise ignore Ctrl+Shift+W.
+  W = { close_window = true },
 }
+
+-- Terminals with tabs keep Ctrl+Shift+W for Cmd+W: it closes the current tab,
+-- and the last tab closes the window, like on a Mac.
+M.tabbed_terminals = { "kitty", "com.mitchellh.ghostty", "wezterm", "org.wezfurlong.wezterm" }
 
 -- Cmd+Equal / Cmd+Minus / Cmd+0 -> app zoom.
 M.zoom = {

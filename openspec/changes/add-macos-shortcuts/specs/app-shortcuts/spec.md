@@ -33,7 +33,7 @@ When a non-terminal window is focused, pressing Cmd+Shift+<letter> SHALL deliver
 - **THEN** the editor receives Ctrl+Shift+Z
 
 ### Requirement: Terminals receive terminal-safe shortcuts
-When a terminal window is focused, Cmd+<letter> SHALL deliver Ctrl+Shift+<letter>, except Cmd+C and Cmd+V, which SHALL copy and paste the same way Omarchy's universal clipboard shortcuts do in terminals. The physical Ctrl key SHALL keep its normal terminal meaning.
+When a terminal window is focused, Cmd+<letter> SHALL deliver Ctrl+Shift+<letter>, except Cmd+C and Cmd+V, which SHALL copy and paste the same way Omarchy's universal clipboard shortcuts do in terminals, and Cmd+W, which is covered below. The physical Ctrl key SHALL keep its normal terminal meaning.
 
 #### Scenario: Copy in a terminal does not interrupt
 - **WHEN** a terminal is focused, text is selected, and the user presses Cmd+C
@@ -46,6 +46,17 @@ When a terminal window is focused, Cmd+<letter> SHALL deliver Ctrl+Shift+<letter
 #### Scenario: Ctrl+C still interrupts
 - **WHEN** a terminal is focused and the user presses the physical Ctrl+C
 - **THEN** the terminal receives Ctrl+C unchanged
+
+### Requirement: Cmd+W closes terminal windows
+In a terminal without tabs, Cmd+W SHALL close the focused terminal window. In a terminal with tabs, Cmd+W SHALL deliver Ctrl+Shift+W, so the current tab closes and the last tab closes the window. Holding Cmd+W SHALL NOT repeat.
+
+#### Scenario: Close a terminal without tabs
+- **WHEN** a foot or Alacritty window is focused and the user presses Cmd+W
+- **THEN** that terminal window closes and other windows stay open
+
+#### Scenario: Close a tab in a tabbed terminal
+- **WHEN** a kitty or Ghostty window with two tabs is focused and the user presses Cmd+W
+- **THEN** the terminal receives Ctrl+Shift+W, the current tab closes, and the window stays open
 
 ### Requirement: Zoom keys reach the app
 Cmd+Equal, Cmd+Minus and Cmd+0 SHALL deliver Ctrl+Equal, Ctrl+Minus and Ctrl+0 to the focused window, so app zoom works as on macOS.

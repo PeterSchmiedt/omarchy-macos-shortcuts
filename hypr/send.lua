@@ -20,7 +20,13 @@ local function press(chord)
 end
 
 -- A chord is { mods, key }; a sequence is a list of chords sent in order.
+-- { close_window = true } closes the focused window instead of sending keys.
 local function send(chords)
+  if chords.close_window then
+    hl.dispatch(hl.dsp.window.close())
+    return
+  end
+
   if chords.key then
     press(chords)
     return
@@ -54,12 +60,32 @@ function M.active_window_is_terminal()
   return false
 end
 
+function M.active_window_class_in(classes)
+  local window = hl.get_active_window()
+  if not window then
+    return false
+  end
+
+  for _, class in ipairs(classes) do
+    if window.class == class then
+      return true
+    end
+  end
+
+  return false
+end
+
 -- Returns a bind callback that sends `default` normally and `terminal` (when
--- given) while a terminal is focused.
-function M.forward(default, terminal)
+-- given) while a terminal is focused. `terminal_fallback` replaces `terminal`
+-- in terminals whose class is listed in `fallback_classes`.
+function M.forward(default, terminal, terminal_fallback, fallback_classes)
   return function()
     if terminal and M.active_window_is_terminal() then
-      send(terminal)
+      if terminal_fallback and M.active_window_class_in(fallback_classes) then
+        send(terminal_fallback)
+      else
+        send(terminal)
+      end
     else
       send(default)
     end

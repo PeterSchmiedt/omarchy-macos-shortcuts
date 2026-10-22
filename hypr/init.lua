@@ -29,13 +29,23 @@ end
 
 -- Cmd+letter and Cmd+Shift+letter go to the app.
 for _, letter in ipairs(keymap.forward_letters) do
-  local terminal = keymap.terminal_overrides[letter] or { mods = "CTRL SHIFT", key = letter }
+  local terminal_default = { mods = "CTRL SHIFT", key = letter }
+  local terminal = keymap.terminal_overrides[letter] or terminal_default
+  local forward
+
+  if terminal.close_window then
+    -- Terminals with tabs close the tab instead of the whole window.
+    forward = send.forward({ mods = "CTRL", key = letter }, terminal, terminal_default, keymap.tabbed_terminals)
+  else
+    forward = send.forward({ mods = "CTRL", key = letter }, terminal)
+  end
 
   o.bind(
     "SUPER + " .. letter,
     description("Cmd+" .. letter .. " -> Ctrl+" .. letter),
-    send.forward({ mods = "CTRL", key = letter }, terminal),
-    { repeating = true }
+    forward,
+    -- Closing a window must not repeat while the key is held.
+    { repeating = not terminal.close_window }
   )
   o.bind(
     "SUPER + SHIFT + " .. letter,
