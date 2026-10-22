@@ -206,7 +206,8 @@ uninstall() {
 
   if [[ $REPO_DIR == "$INSTALL_DIR" ]]; then
     local answer=""
-    if [[ -r /dev/tty ]]; then
+    # /dev/tty can exist without a controlling terminal, so try to open it.
+    if (exec </dev/tty) 2>/dev/null; then
       printf 'Also delete the downloaded copy in %s? [y/N] ' "$INSTALL_DIR" >/dev/tty
       read -r answer </dev/tty || answer=""
     fi
