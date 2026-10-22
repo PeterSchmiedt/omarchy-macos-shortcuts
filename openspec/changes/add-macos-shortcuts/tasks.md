@@ -58,7 +58,7 @@
   - Move the clone away and run `hyprctl reload`: `hyprctl configerrors` is clean and Omarchy's defaults apply.
   - Run `omarchy refresh hyprland` then the installer, and the block is restored.
   - A user binding on Cmd+M in `bindings.lua` wins.
-- [ ] 4.7 Write the install, update, uninstall and `--pc-keyboard` sections of `README.md`, including the curl one-liner, a link to `install.sh`, and the inspect-first clone path. Verify that the documented commands run exactly as written on a clean `~/.local/share`.
+- [x] 4.7 Write the install, update, uninstall and `--pc-keyboard` sections of `README.md`, including the curl one-liner, a link to `install.sh`, and the inspect-first clone path. Verify that the documented commands run exactly as written on a clean `~/.local/share`.
 
 ## 5. Collision check
 
@@ -72,7 +72,7 @@
 
   Verify against the current Omarchy that it exits 0, and that a temporary extra `o.bind("CTRL + ALT + T", ...)` in a copied defaults dir (via `OMARCHY_PATH`) makes it name the key and exit 1.
 - [ ] 5.3 Add `--notify` and `hooks/post-update.hook`, and have the installer copy the hook to `post-update.d/omarchy-macos-shortcuts.hook`. Verify that `omarchy-hook post-update` shows no notification when the system is clean and one notification when a collision is planted. Verify with checksums before and after that no file under `~/.config` changes.
-- [ ] 5.4 Document the check and the hook in `README.md`, including what to do when Omarchy adds a colliding binding. Verify that the README command runs.
+- [x] 5.4 Document the check and the hook in `README.md`, including what to do when Omarchy adds a colliding binding. Verify that the README command runs.
 
 ## 6. Integration
 
